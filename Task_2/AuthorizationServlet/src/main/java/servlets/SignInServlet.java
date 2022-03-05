@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class SignInServlet extends HttpServlet {
     @Override
@@ -15,10 +16,23 @@ public class SignInServlet extends HttpServlet {
                 password = request.getParameter("password"),
                 sessionId = request.getSession().getId();
 
+        if (Objects.equals(login, "") || Objects.equals(password, "")
+                || login == null || password == null) {
+            response.setContentType("text/http;charset=UTF-8");
+            response.getWriter().println("Bad request");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
         if (AccountService.signIn(sessionId, login, password)) {
             response.setContentType("text/http;charset=UTF-8");
-//            response.setContentLength(128);
             response.getWriter().println("Authorized");
+            response.setStatus(HttpServletResponse.SC_OK);
+        }
+        else {
+            response.setContentType("text/http;charset=UTF-8");
+            response.getWriter().println("Unauthorized");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }

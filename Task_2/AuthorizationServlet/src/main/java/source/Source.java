@@ -9,8 +9,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import servlets.SignInServlet;
 import servlets.SignUpServlet;
 
-import java.net.ContentHandler;
-
 public class Source {
     public static void main(String[] args) throws Exception {
         SignUpServlet signUpServlet = new SignUpServlet();
