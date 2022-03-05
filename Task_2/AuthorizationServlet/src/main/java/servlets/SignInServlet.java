@@ -26,7 +26,7 @@ public class SignInServlet extends HttpServlet {
 
         if (AccountService.signIn(sessionId, login, password)) {
             response.setContentType("text/http;charset=UTF-8");
-            response.getWriter().println("Authorized");
+            response.getWriter().println("Authorized: " + login);
             response.setStatus(HttpServletResponse.SC_OK);
         }
         else {

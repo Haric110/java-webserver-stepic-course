@@ -18,7 +18,8 @@ public class AccountService {
     public static boolean signIn(String userSessionId, String login, String password) {
         UserProfile userProfile = getUserByLogin(login);
 
-        if (userProfile != null && userProfile.getPassword().equals(password)) {
+        if (userProfile != null && userProfile.getPassword().equals(password)
+                && getUserBySessionId(userSessionId) == null) {
             sessionIdToProfile.put(userSessionId, userProfile);
             return true;
         }
