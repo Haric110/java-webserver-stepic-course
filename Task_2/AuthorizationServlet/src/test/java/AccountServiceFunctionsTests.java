@@ -14,4 +14,14 @@ public class AccountServiceFunctionsTests {
         AccountService.signUp("test", "test");
         Assert.assertTrue(AccountService.signIn("", "test", "test"));
     }
+
+    @Test
+    public void passNullSessionIdTest() {
+        Assert.assertNull(AccountService.getUserBySessionId(null));
+    }
+
+    @Test
+    public void signOutWithNullProfile() {
+        Assert.assertFalse(AccountService.signOut(null));
+    }
 }
