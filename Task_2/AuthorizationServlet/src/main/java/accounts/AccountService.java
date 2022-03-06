@@ -9,7 +9,7 @@ public class AccountService {
 
     public static boolean signUp(String login, String password) {
         if (getUserByLogin(login) == null) {
-            loginToProfile.put(login, new UserProfile(login, password));
+            loginToProfile.put(login, new UserProfile(password));
             return true;
         }
         return false;
