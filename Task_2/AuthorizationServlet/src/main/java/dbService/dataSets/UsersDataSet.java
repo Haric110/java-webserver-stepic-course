@@ -2,17 +2,17 @@ package dbService.dataSets;
 
 
 public class UsersDataSet {
-    private final int userId;
+    private final long userId;
     private final String login;
     private final String password;
 
-    public UsersDataSet(int userId, String login, String password) {
+    public UsersDataSet(long userId, String login, String password) {
         this.userId = userId;
         this.login = login;
         this.password = password;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
