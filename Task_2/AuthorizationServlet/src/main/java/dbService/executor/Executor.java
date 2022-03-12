@@ -33,9 +33,9 @@ public record Executor(Connection connection) {
                 if (argsTypes[i] == Long.class) statement.setLong(i + 1, (long) argsValues[i]);
                 else if (argsTypes[i] == String.class) statement.setString(i + 1, argsValues[i].toString());
                 else throw new UnhandledArgumentTypeException(
-                            "Unhandled argument type has been passed for update query \"" +
-                                    update + "\"\scolumn: " + (i + 1) +
-                                    "\s column type: " + argsTypes[i].getName());
+                            "Unhandled argument type has been passed for update query \n\"" +
+                                    update + "\"\ncolumn number: " + (i + 1) +
+                                    "\ncolumn type: " + argsTypes[i].getName());
             }
 
             statement.execute();
