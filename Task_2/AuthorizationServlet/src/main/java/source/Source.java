@@ -1,5 +1,6 @@
 package source;
 
+import dbService.DBService;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -26,6 +27,8 @@ public class Source {
 
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{ resourceHandler, contextHandler });
+
+        DBService dbService = DBService.getInstance();
 
         Server server = new Server(8080);
         server.setHandler(handlers);
