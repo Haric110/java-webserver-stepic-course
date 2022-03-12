@@ -1,5 +1,5 @@
 import dbService.DBService;
-import dbService.dao.DAO;
+import dbService.dao.UsersDAO;
 import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dataSets.UsersDataSet;
 import dbService.executor.Executor;
@@ -9,21 +9,21 @@ import org.junit.Test;
 public class DBServiceTests {
     @Test
     public void createTableTest() {
-        DAO dao = new DAO(new Executor(DBService.getInstance().getConnection()));
+        UsersDAO dao = new UsersDAO(new Executor(DBService.getInstance().getConnection()));
 
         Assert.assertTrue(dao.createUsersTable());
     }
 
     @Test
     public void dropTableTest() {
-        DAO dao = new DAO(new Executor(DBService.getInstance().getConnection()));
+        UsersDAO dao = new UsersDAO(new Executor(DBService.getInstance().getConnection()));
 
         Assert.assertTrue(dao.dropTable());
     }
 
     @Test
     public void insertNewUserTest() {
-        DAO dao = new DAO(new Executor(DBService.getInstance().getConnection()));
+        UsersDAO dao = new UsersDAO(new Executor(DBService.getInstance().getConnection()));
         dao.dropTable();
         dao.createUsersTable();
 
@@ -32,7 +32,7 @@ public class DBServiceTests {
 
     @Test
     public void insertDuplicatedLogin() {
-        DAO dao = new DAO(new Executor(DBService.getInstance().getConnection()));
+        UsersDAO dao = new UsersDAO(new Executor(DBService.getInstance().getConnection()));
         dao.dropTable();
         dao.createUsersTable();
         dao.insertNewUser("admin", "admin");
@@ -52,7 +52,7 @@ public class DBServiceTests {
 
         final UsersDataSet USR;
 
-        DAO dao = new DAO(new Executor(DBService.getInstance().getConnection()));
+        UsersDAO dao = new UsersDAO(new Executor(DBService.getInstance().getConnection()));
         dao.dropTable();
         dao.createUsersTable();
         dao.insertNewUser(LOGIN1, PSW1);
@@ -60,6 +60,7 @@ public class DBServiceTests {
         dao.insertNewUser(LOGIN3, PSW3);
 
         USR = dao.getUserById(2);
+        assert USR != null;
         Assert.assertTrue(USR.getLogin().equals(LOGIN2) && USR.getPassword().equals(PSW2));
     }
 }

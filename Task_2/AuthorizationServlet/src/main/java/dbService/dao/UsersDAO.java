@@ -3,16 +3,12 @@ package dbService.dao;
 import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dataSets.UsersDataSet;
 import dbService.executor.Executor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 
-public class DAO {
-    private final Executor executor;
-
-    public DAO(Executor executor) {
-        this.executor = executor;
-    }
+public record UsersDAO(Executor executor) {
 
     public boolean createUsersTable() {
         return executor.execUpdate("""
@@ -33,24 +29,24 @@ public class DAO {
         try {
             return executor.execUpdate("insert into users (login, password) values (?, ?)",
                     2,
-                    new Class<?>[]  {String.class, String.class},
-                    new Object[]    {login, password});
+                    new Class<?>[]  { String.class, String.class },
+                    new Object[]    { login, password } );
         } catch (ArraysLengthsMismathException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public UsersDataSet getUserById(long id) throws ArraysLengthsMismathException {
+    public @Nullable UsersDataSet getUserById(long id) throws ArraysLengthsMismathException {
         ArrayList<UsersDataSet> resultsList = executor.execQuery("""
                         select u.id, u.login, u.password
                         from users u where u.id = ?""",
                 1,
-                new Class[] { Long.class },
+                new Class[]  { Long.class },
                 new Object[] { id },
                 rs -> {
                     ArrayList<UsersDataSet> resultObjList = new ArrayList<>();
-                    while(!rs.isLast()) {
+                    while (!rs.isLast()) {
                         rs.next();
                         resultObjList.add(new UsersDataSet(
                                 rs.getLong(1),
