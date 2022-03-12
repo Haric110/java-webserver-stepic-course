@@ -19,7 +19,7 @@ public record Executor(Connection connection) {
         }
     }
 
-    public boolean execUpdate(String update, int argsCount, @NotNull Class<?>[] argsTypes, @NotNull Object[] argsValues)
+    public boolean execUpdate(String update, int argsCount, Class<?> @NotNull[] argsTypes, Object @NotNull[] argsValues)
             throws ArraysLengthsMismathException {
 
         if (argsTypes.length != argsCount || argsValues.length != argsCount) {
@@ -28,15 +28,7 @@ public record Executor(Connection connection) {
         }
 
         try (PreparedStatement statement = connection.prepareStatement(update)) {
-            for (int i = 0; i < argsCount; i++) {
-
-                if (argsTypes[i] == Long.class) statement.setLong(i + 1, (long) argsValues[i]);
-                else if (argsTypes[i] == String.class) statement.setString(i + 1, argsValues[i].toString());
-                else throw new UnhandledArgumentTypeException(
-                            "Unhandled argument type has been passed for update query \n\"" +
-                                    update + "\"\ncolumn number: " + (i + 1) +
-                                    "\ncolumn type: " + argsTypes[i].getName());
-            }
+            setValuesToStatement(argsCount, argsTypes, statement, argsValues, update);
 
             statement.execute();
             return true;
@@ -63,13 +55,7 @@ public record Executor(Connection connection) {
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            for (int i = 0; i < argsCount; i++) {
-                if (argsTypes[i] == Long.class) statement.setLong(i + 1, (long) argsValues[i]);
-                else if (argsTypes[i] == String.class) statement.setString(i + 1, argsValues[i].toString());
-                else throw new UnhandledArgumentTypeException("Unhandled argument type has been passed for query \""
-                            + query + "\"\scolumn: " + (i + 1)
-                            + "\s column type: " + argsTypes[i].getName());
-            }
+            setValuesToStatement(argsCount, argsTypes, statement, argsValues, query);
             ResultSet rs = statement.executeQuery();
             values = handler.handle(rs);
 
@@ -79,5 +65,21 @@ public record Executor(Connection connection) {
         }
 
         return null;
+    }
+
+    private void setValuesToStatement(int argsCount,
+                                      @NotNull Class<?>[] argsTypes,
+                                      PreparedStatement statement,
+                                      @NotNull Object
+                                      @NotNull [] argsValues,
+                                      String query) throws SQLException, UnhandledArgumentTypeException {
+        for (int i = 0; i < argsCount; i++) {
+            if (argsTypes[i] == Long.class) statement.setLong(i + 1, (long) argsValues[i]);
+            else if (argsTypes[i] == String.class) statement.setString(i + 1, argsValues[i].toString());
+            else throw new UnhandledArgumentTypeException(
+                    "Unhandled argument type has been passed for query \n\""
+                            + query + "\"\ncolumn number: " + (i + 1)
+                            + "\n column type: " + argsTypes[i].getName());
+        }
     }
 }
