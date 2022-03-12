@@ -1,7 +1,9 @@
 package accounts;
 
 import dbService.DBService;
+import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dao.UsersDAO;
+import dbService.dataSets.UsersDataSet;
 import dbService.executor.Executor;
 
 import java.sql.Connection;
@@ -9,24 +11,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AccountService {
-    private static final Map<String, UserProfile> loginToProfile = new HashMap<>();
-    private static final Map<String, UserProfile> sessionIdToProfile = new HashMap<>();
+    private static final Map<String, UsersDataSet> sessionIdToProfile = new HashMap<>();
 
     private static final Connection connection = DBService.getInstance().getConnection();
     private static final Executor executor = new Executor(connection);
 
-    public static boolean signUp(String login, String password) {
+    public static boolean signUp(String login, String password) throws ArraysLengthsMismathException {
         if (getUserByLogin(login) == null) {
-            loginToProfile.put(login, new UserProfile(password));
-
             DBService.getInstance().checkConnection();
             return new UsersDAO(executor).insertNewUser(login, password);
         }
         return false;
     }
 
-    public static boolean signIn(String userSessionId, String login, String password) {
-        UserProfile userProfile = getUserByLogin(login);
+    public static boolean signIn(String userSessionId, String login, String password) throws ArraysLengthsMismathException {
+        UsersDataSet userProfile = getUserByLogin(login);
 
         if (userProfile != null && userProfile.getPassword().equals(password)
                 && getUserBySessionId(userSessionId) == null) {
@@ -44,11 +43,12 @@ public class AccountService {
         return false;
     }
 
-    public static UserProfile getUserByLogin(String login) {
-        return loginToProfile.get(login);
+    public static UsersDataSet getUserByLogin(String login) throws ArraysLengthsMismathException {
+        DBService.getInstance().checkConnection();
+        return new UsersDAO(executor).getUserByLogin(login);
     }
 
-    public static UserProfile getUserBySessionId(String sessionId) {
+    public static UsersDataSet getUserBySessionId(String sessionId) {
         return sessionIdToProfile.get(sessionId);
     }
 }

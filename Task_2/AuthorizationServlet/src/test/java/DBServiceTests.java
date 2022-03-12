@@ -63,4 +63,28 @@ public class DBServiceTests {
         assert USR != null;
         Assert.assertTrue(USR.getLogin().equals(LOGIN2) && USR.getPassword().equals(PSW2));
     }
+
+    @Test
+    public void selectUserByLoginTest() throws ArraysLengthsMismathException {
+        final String
+                LOGIN1 = "TEST1",
+                LOGIN2 = "TEST2",
+                LOGIN3 = "TEST3",
+                PSW1 = "PASS1",
+                PSW2 = "PASS2",
+                PSW3 = "PASS3";
+
+        final UsersDataSet USR;
+
+        UsersDAO dao = new UsersDAO(new Executor(DBService.getInstance().getConnection()));
+        dao.dropTable();
+        dao.createUsersTable();
+        dao.insertNewUser(LOGIN1, PSW1);
+        dao.insertNewUser(LOGIN2, PSW2);
+        dao.insertNewUser(LOGIN3, PSW3);
+
+        USR = dao.getUserByLogin(LOGIN2);
+        assert USR != null;
+        Assert.assertTrue(USR.getLogin().equals(LOGIN2) && USR.getPassword().equals(PSW2));
+    }
 }

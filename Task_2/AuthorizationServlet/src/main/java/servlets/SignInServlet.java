@@ -1,6 +1,7 @@
 package servlets;
 
 import accounts.AccountService;
+import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,15 +25,19 @@ public class SignInServlet extends HttpServlet {
             return;
         }
 
-        if (AccountService.signIn(sessionId, login, password)) {
-            response.setContentType("text/http;charset=UTF-8");
-            response.getWriter().println("Authorized: " + login);
-            response.setStatus(HttpServletResponse.SC_OK);
-        }
-        else {
-            response.setContentType("text/http;charset=UTF-8");
-            response.getWriter().println("Unauthorized");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        try {
+            if (AccountService.signIn(sessionId, login, password)) {
+                response.setContentType("text/http;charset=UTF-8");
+                response.getWriter().println("Authorized: " + login);
+                response.setStatus(HttpServletResponse.SC_OK);
+            }
+            else {
+                response.setContentType("text/http;charset=UTF-8");
+                response.getWriter().println("Unauthorized");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+        } catch (ArraysLengthsMismathException e) {
+            e.printStackTrace();
         }
     }
 }

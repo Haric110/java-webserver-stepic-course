@@ -59,4 +59,27 @@ public record UsersDAO(Executor executor) {
         if (resultsList == null) return null;
         return resultsList.get(0);
     }
+
+    public UsersDataSet getUserByLogin(String login) throws ArraysLengthsMismathException {
+        ArrayList<UsersDataSet> resultsList = executor.execQuery("""
+                        select u.id, u.login, u.password
+                        from users u where u.login = ?""",
+                1,
+                new Class[]  { String.class },
+                new Object[] { login },
+                rs -> {
+                    ArrayList<UsersDataSet> resultObjList = new ArrayList<>();
+                    while (!rs.isLast()) {
+                        rs.next();
+                        resultObjList.add(new UsersDataSet(
+                                rs.getLong(1),
+                                rs.getString(2),
+                                rs.getString(3)));
+                    }
+                    return resultObjList;
+                });
+
+        if (resultsList == null) return null;
+        return resultsList.get(0);
+    }
 }
