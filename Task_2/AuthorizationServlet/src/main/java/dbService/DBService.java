@@ -51,6 +51,10 @@ public class DBService {
         if (this.connection == null) initConnection();
     }
 
+    public Connection getConnection() {
+        return this.connection;
+    }
+
     private DBService() {
         initConnection();
     }

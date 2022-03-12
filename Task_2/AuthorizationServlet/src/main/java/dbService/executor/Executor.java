@@ -3,27 +3,23 @@ package dbService.executor;
 import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dao.Exceptions.UnhandledArgumentTypeException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Executor {
-    private final Connection connection;
+public record Executor(Connection connection) {
 
-    public Executor(Connection connection) {
-        this.connection = connection;
-    }
-
-    public void execUpdate(String update) {
-        try(Statement statement = connection.createStatement()) {
+    public boolean execUpdate(String update) {
+        try (Statement statement = connection.createStatement()) {
             statement.execute(update);
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
-    public void execUpdate(String update, int argsCount, @NotNull Class<?>[] argsTypes, @NotNull Object[] argsValues)
+    public boolean execUpdate(String update, int argsCount, @NotNull Class<?>[] argsTypes, @NotNull Object[] argsValues)
             throws ArraysLengthsMismathException {
 
         if (argsTypes.length != argsCount || argsValues.length != argsCount) {
@@ -37,16 +33,17 @@ public class Executor {
                 if (argsTypes[i] == Long.class) statement.setLong(i + 1, (long) argsValues[i]);
                 else if (argsTypes[i] == String.class) statement.setString(i + 1, argsValues[i].toString());
                 else throw new UnhandledArgumentTypeException(
-                                "Unhandled argument type has been passed for update query \"" +
-                                        update + "\"\scolumn: " + (i + 1) +
-                                        "\s column type: " + argsTypes[i].getName());
+                            "Unhandled argument type has been passed for update query \"" +
+                                    update + "\"\scolumn: " + (i + 1) +
+                                    "\s column type: " + argsTypes[i].getName());
             }
 
             statement.execute();
+            return true;
         } catch (SQLException | UnhandledArgumentTypeException e) {
             e.printStackTrace();
+            return false;
         }
-
     }
 
     /**
@@ -54,8 +51,8 @@ public class Executor {
      */
     public <T> ArrayList<T> execQuery(String query,
                                       int argsCount,
-                                      Class<?>[] argsTypes,
-                                      Object[] argsValues,
+                                      @NotNull Class<?>[] argsTypes,
+                                      @NotNull Object[] argsValues,
                                       @NotNull ResultHandler<T> handler)
             throws ArraysLengthsMismathException {
         ArrayList<T> values;
