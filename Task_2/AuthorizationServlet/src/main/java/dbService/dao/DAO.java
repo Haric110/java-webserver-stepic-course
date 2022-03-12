@@ -43,7 +43,7 @@ public class DAO {
 
     public UsersDataSet getUserById(long id) throws ArraysLengthsMismathException {
         ArrayList<UsersDataSet> resultsList = executor.execQuery("""
-                        select tu.id, u.login, u.password
+                        select u.id, u.login, u.password
                         from users u where u.id = ?""",
                 1,
                 new Class[] { Long.class },
