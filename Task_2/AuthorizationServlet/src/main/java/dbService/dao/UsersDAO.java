@@ -69,17 +69,32 @@ public record UsersDAO(Executor executor) {
                 new Object[] { login },
                 rs -> {
                     ArrayList<UsersDataSet> resultObjList = new ArrayList<>();
-                    while (!rs.isLast()) {
-                        rs.next();
+                    while (rs.next()) {
+                            resultObjList.add(new UsersDataSet(
+                                    rs.getLong(1),
+                                    rs.getString(2),
+                                    rs.getString(3)));
+                    }
+                    return resultObjList;
+                });
+
+        if (resultsList == null || resultsList.isEmpty()) return null;
+        return resultsList.get(0);
+    }
+
+    public ArrayList<UsersDataSet> getUsersByLikeCondition() {
+        return executor.execQuery(
+                "select u.id, u.login, u.password  from users u where login like 'TEST%'",
+                rs -> {
+                    ArrayList<UsersDataSet> resultObjList = new ArrayList<>();
+                    while (rs.next()) {
                         resultObjList.add(new UsersDataSet(
                                 rs.getLong(1),
                                 rs.getString(2),
                                 rs.getString(3)));
                     }
                     return resultObjList;
-                });
-
-        if (resultsList == null) return null;
-        return resultsList.get(0);
+                }
+        );
     }
 }

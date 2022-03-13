@@ -28,8 +28,6 @@ public class Source {
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{ resourceHandler, contextHandler });
 
-        DBService dbService = DBService.getInstance();
-
         Server server = new Server(8080);
         server.setHandler(handlers);
 

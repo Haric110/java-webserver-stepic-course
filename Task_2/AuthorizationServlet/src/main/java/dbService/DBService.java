@@ -58,9 +58,4 @@ public class DBService {
     private DBService() {
         initConnection();
     }
-
-    public static void main(String[] args) {
-        DBService dbService = DBService.getInstance();
-        dbService.checkConnection();
-    }
 }

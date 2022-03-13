@@ -3,6 +3,7 @@ package dbService.executor;
 import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dao.Exceptions.UnhandledArgumentTypeException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -41,11 +42,11 @@ public record Executor(Connection connection) {
     /**
      * Вызывает Select-запрос.
      */
-    public <T> ArrayList<T> execQuery(String query,
-                                      int argsCount,
-                                      @NotNull Class<?>[] argsTypes,
-                                      @NotNull Object[] argsValues,
-                                      @NotNull ResultHandler<T> handler)
+    public <T> @Nullable ArrayList<T> execQuery(String query,
+                                                int argsCount,
+                                                Class<?> @NotNull [] argsTypes,
+                                                Object @NotNull [] argsValues,
+                                                @NotNull ResultHandler<T> handler)
             throws ArraysLengthsMismathException {
         ArrayList<T> values;
 
@@ -66,6 +67,22 @@ public record Executor(Connection connection) {
 
         return null;
     }
+
+    public <T> @Nullable ArrayList<T> execQuery(String query, @NotNull ResultHandler<T> handler) {
+        ArrayList<T> values;
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            ResultSet rs = statement.executeQuery();
+            values = handler.handle(rs);
+
+            return values;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
     private void setValuesToStatement(int argsCount,
                                       @NotNull Class<?>[] argsTypes,
