@@ -1,5 +1,4 @@
 import accounts.AccountService;
-import accounts.UserProfile;
 import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import org.junit.Assert;
 import org.junit.Test;

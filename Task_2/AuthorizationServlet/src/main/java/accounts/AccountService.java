@@ -18,7 +18,6 @@ public class AccountService {
 
     public static boolean signUp(String login, String password) throws ArraysLengthsMismathException {
         if (getUserByLogin(login) == null) {
-            DBService.getInstance().checkConnection();
             return new UsersDAO(executor).insertNewUser(login, password);
         }
         return false;

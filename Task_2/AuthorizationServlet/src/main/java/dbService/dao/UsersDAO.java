@@ -1,5 +1,6 @@
 package dbService.dao;
 
+import dbService.DBService;
 import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dataSets.UsersDataSet;
 import dbService.executor.Executor;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 
+@SuppressWarnings("ClassCanBeRecord")
 public class UsersDAO {
     private final Executor executor;
 
@@ -33,6 +35,7 @@ public class UsersDAO {
     }
 
     public boolean insertNewUser(String login, String password) {
+        DBService.getInstance().checkConnection();
         try {
             return executor.execUpdate("insert into users (login, password) values (?, ?)",
                     2,

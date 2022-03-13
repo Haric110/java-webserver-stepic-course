@@ -5,13 +5,14 @@ import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Objects;
 
 public class SignInServlet extends HttpServlet {
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doPost(@NotNull HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String
                 login = request.getParameter("login"),
                 password = request.getParameter("password"),

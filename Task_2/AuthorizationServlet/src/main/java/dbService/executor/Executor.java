@@ -8,7 +8,13 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.*;
 import java.util.ArrayList;
 
-public record Executor(Connection connection) {
+@SuppressWarnings("ClassCanBeRecord")
+public final class Executor {
+    private final Connection connection;
+
+    public Executor(Connection connection) {
+        this.connection = connection;
+    }
 
     public boolean execUpdate(String update) {
         try (Statement statement = connection.createStatement()) {
@@ -20,7 +26,10 @@ public record Executor(Connection connection) {
         }
     }
 
-    public boolean execUpdate(String update, int argsCount, Class<?> @NotNull[] argsTypes, Object @NotNull[] argsValues)
+    public boolean execUpdate(String update,
+                              int argsCount,
+                              Class<?> @NotNull [] argsTypes,
+                              Object @NotNull [] argsValues)
             throws ArraysLengthsMismathException {
 
         if (argsTypes.length != argsCount || argsValues.length != argsCount) {
@@ -29,7 +38,7 @@ public record Executor(Connection connection) {
         }
 
         try (PreparedStatement statement = connection.prepareStatement(update)) {
-            setValuesToStatement(argsCount, argsTypes, statement, argsValues, update);
+            setValuesToStatement(argsCount, argsTypes, argsValues, statement, update);
 
             statement.execute();
             return true;
@@ -56,7 +65,7 @@ public record Executor(Connection connection) {
         }
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            setValuesToStatement(argsCount, argsTypes, statement, argsValues, query);
+            setValuesToStatement(argsCount, argsTypes, argsValues, statement, query);
             ResultSet rs = statement.executeQuery();
             values = handler.handle(rs);
 
@@ -86,17 +95,16 @@ public record Executor(Connection connection) {
 
     private void setValuesToStatement(int argsCount,
                                       @NotNull Class<?>[] argsTypes,
+                                      Object @NotNull [] argsValues,
                                       PreparedStatement statement,
-                                      @NotNull Object
-                                      @NotNull [] argsValues,
                                       String query) throws SQLException, UnhandledArgumentTypeException {
         for (int i = 0; i < argsCount; i++) {
             if (argsTypes[i] == Long.class) statement.setLong(i + 1, (long) argsValues[i]);
             else if (argsTypes[i] == String.class) statement.setString(i + 1, argsValues[i].toString());
             else throw new UnhandledArgumentTypeException(
-                    "Unhandled argument type has been passed for query \n\""
-                            + query + "\"\ncolumn number: " + (i + 1)
-                            + "\n column type: " + argsTypes[i].getName());
+                        "Unhandled argument type has been passed for query \n\""
+                                + query + "\"\ncolumn number: " + (i + 1)
+                                + "\n column type: " + argsTypes[i].getName());
         }
     }
 }

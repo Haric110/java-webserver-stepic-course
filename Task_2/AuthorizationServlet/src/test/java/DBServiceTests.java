@@ -100,8 +100,6 @@ public class DBServiceTests {
                 PSW2 = "PASS2",
                 PSW3 = "PASS3";
 
-        final UsersDataSet USR;
-
         UsersDAO dao = new UsersDAO(new Executor(DBService.getInstance().getConnection()));
         dao.dropTable();
         dao.createUsersTable();
@@ -121,8 +119,6 @@ public class DBServiceTests {
                 PSW1 = "PASS1",
                 PSW2 = "PASS2",
                 PSW3 = "PASS3";
-
-        final UsersDataSet USR;
 
         UsersDAO dao = new UsersDAO(new Executor(DBService.getInstance().getConnection()));
         dao.dropTable();

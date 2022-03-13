@@ -19,6 +19,11 @@ public class DBService {
         return instance;
     }
 
+    private DBService() {
+        initConnection();
+    }
+
+
     private void initConnection() {
         try {
             DriverManager.registerDriver((Driver) Class.forName("org.postgresql.Driver")
@@ -53,9 +58,5 @@ public class DBService {
 
     public Connection getConnection() {
         return this.connection;
-    }
-
-    private DBService() {
-        initConnection();
     }
 }
