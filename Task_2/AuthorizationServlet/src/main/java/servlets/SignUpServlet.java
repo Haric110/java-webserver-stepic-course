@@ -2,7 +2,6 @@ package servlets;
 
 
 import accounts.AccountService;
-import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,19 +25,15 @@ public final class SignUpServlet extends HttpServlet {
             return;
         }
 
-        try {
-            if (AccountService.signUp(login, password)) {
-                response.setContentType("text/http;charset=UTF-8");
-                response.getWriter().println(String.format("A new user has been registered: %s", login));
-                response.setStatus(HttpServletResponse.SC_OK);
-            }
-            else {
-                response.setContentType("text/http;charset=UTF-8");
-                response.getWriter().println(String.format("This user is already registered: %s", login));
-                response.setStatus(HttpServletResponse.SC_OK);
-            }
-        } catch (ArraysLengthsMismathException e) {
-            e.printStackTrace();
+        if (AccountService.signUp(login, password)) {
+            response.setContentType("text/http;charset=UTF-8");
+            response.getWriter().println(String.format("A new user has been registered: %s", login));
+            response.setStatus(HttpServletResponse.SC_OK);
+        }
+        else {
+            response.setContentType("text/http;charset=UTF-8");
+            response.getWriter().println(String.format("This user is already registered: %s", login));
+            response.setStatus(HttpServletResponse.SC_OK);
         }
     }
 }

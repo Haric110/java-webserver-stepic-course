@@ -1,7 +1,6 @@
 package dbService.dao;
 
 import dbService.DBService;
-import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dataSets.UsersDataSet;
 import dbService.executor.Executor;
 import org.jetbrains.annotations.Nullable;
@@ -36,23 +35,14 @@ public class UsersDAO {
 
     public boolean insertNewUser(String login, String password) {
         DBService.getInstance().checkConnection();
-        try {
-            return executor.execUpdate("insert into users (login, password) values (?, ?)",
-                    2,
-                    new Class<?>[]  { String.class, String.class },
-                    new Object[]    { login, password } );
-        } catch (ArraysLengthsMismathException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return executor.execUpdate("insert into users (login, password) values (?, ?)",
+                new Object[]    { login, password } );
     }
 
-    public @Nullable UsersDataSet getUserById(long id) throws ArraysLengthsMismathException {
+    public @Nullable UsersDataSet getUserById(long id) {
         ArrayList<UsersDataSet> resultsList = executor.execQuery("""
                         select u.id, u.login, u.password
                         from users u where u.id = ?""",
-                1,
-                new Class[]  { Long.class },
                 new Object[] { id },
                 rs -> {
                     ArrayList<UsersDataSet> resultObjList = new ArrayList<>();
@@ -70,12 +60,10 @@ public class UsersDAO {
         return resultsList.get(0);
     }
 
-    public UsersDataSet getUserByLogin(String login) throws ArraysLengthsMismathException {
+    public UsersDataSet getUserByLogin(String login) {
         ArrayList<UsersDataSet> resultsList = executor.execQuery("""
                         select u.id, u.login, u.password
                         from users u where u.login = ?""",
-                1,
-                new Class[]  { String.class },
                 new Object[] { login },
                 rs -> {
                     ArrayList<UsersDataSet> resultObjList = new ArrayList<>();

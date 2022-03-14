@@ -1,16 +1,15 @@
 import accounts.AccountService;
-import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class AccountServiceFunctionsTests {
     @Test
-    public void unknownUserSignInTest() throws ArraysLengthsMismathException {
+    public void unknownUserSignInTest() {
         Assert.assertFalse(AccountService.signIn("", "", ""));
     }
 
     @Test
-    public void registeredUserSignInTest() throws ArraysLengthsMismathException {
+    public void registeredUserSignInTest() {
         AccountService.signUp("test", "test");
         Assert.assertTrue(AccountService.signIn("", "test", "test"));
     }

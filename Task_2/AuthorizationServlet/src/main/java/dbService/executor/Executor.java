@@ -1,6 +1,5 @@
 package dbService.executor;
 
-import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dao.Exceptions.UnhandledArgumentTypeException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,20 +25,9 @@ public final class Executor {
         }
     }
 
-    public boolean execUpdate(String update,
-                              int argsCount,
-                              Class<?> @NotNull [] argsTypes,
-                              Object @NotNull [] argsValues)
-            throws ArraysLengthsMismathException {
-
-        if (argsTypes.length != argsCount || argsValues.length != argsCount) {
-            throw new ArraysLengthsMismathException("Count of passed argument types or does not match" +
-                    "with count of passed objects. Or arrays lengths does not match with passed argsCount.");
-        }
-
+    public boolean execUpdate(String update, Object @NotNull [] argsValues) {
         try (PreparedStatement statement = connection.prepareStatement(update)) {
-            setValuesToStatement(argsCount, argsTypes, argsValues, statement, update);
-
+            setValuesToStatement(argsValues, statement, update);
             statement.execute();
             return true;
         } catch (SQLException | UnhandledArgumentTypeException e) {
@@ -52,20 +40,12 @@ public final class Executor {
      * Вызывает Select-запрос.
      */
     public <T> @Nullable ArrayList<T> execQuery(String query,
-                                                int argsCount,
-                                                Class<?> @NotNull [] argsTypes,
                                                 Object @NotNull [] argsValues,
-                                                @NotNull ResultHandler<T> handler)
-            throws ArraysLengthsMismathException {
+                                                @NotNull ResultHandler<T> handler) {
         ArrayList<T> values;
 
-        if (argsTypes.length != argsCount || argsValues.length != argsCount) {
-            throw new ArraysLengthsMismathException("Count of passed argument types or does not match" +
-                    "with count of passed objects. Or arrays lengths does not match with passed argsCount.");
-        }
-
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            setValuesToStatement(argsCount, argsTypes, argsValues, statement, query);
+            setValuesToStatement(argsValues, statement, query);
             ResultSet rs = statement.executeQuery();
             values = handler.handle(rs);
 
@@ -93,18 +73,15 @@ public final class Executor {
     }
 
 
-    private void setValuesToStatement(int argsCount,
-                                      @NotNull Class<?>[] argsTypes,
-                                      Object @NotNull [] argsValues,
+    private void setValuesToStatement(Object @NotNull [] argsValues,
                                       PreparedStatement statement,
                                       String query) throws SQLException, UnhandledArgumentTypeException {
-        for (int i = 0; i < argsCount; i++) {
-            if (argsTypes[i] == Long.class) statement.setLong(i + 1, (long) argsValues[i]);
-            else if (argsTypes[i] == String.class) statement.setString(i + 1, argsValues[i].toString());
+        for (int i = 0; i < argsValues.length; i++) {
+            if (argsValues[i] instanceof Long) statement.setLong(i + 1, (long) argsValues[i]);
+            else if (argsValues[i] instanceof String) statement.setString(i + 1, argsValues[i].toString());
             else throw new UnhandledArgumentTypeException(
                         "Unhandled argument type has been passed for query \n\""
-                                + query + "\"\ncolumn number: " + (i + 1)
-                                + "\n column type: " + argsTypes[i].getName());
+                                + query + "\"\ncolumn number: " + (i + 1));
         }
     }
 }

@@ -1,6 +1,5 @@
 import dbService.DBService;
 import dbService.dao.UsersDAO;
-import dbService.dao.Exceptions.ArraysLengthsMismathException;
 import dbService.dataSets.UsersDataSet;
 import dbService.executor.Executor;
 import org.junit.Assert;
@@ -43,7 +42,7 @@ public class DBServiceTests {
     }
 
     @Test
-    public void selectUserByIdTest() throws ArraysLengthsMismathException {
+    public void selectUserByIdTest() {
         final String
                 LOGIN1 = "TEST1",
                 LOGIN2 = "TEST2",
@@ -67,7 +66,7 @@ public class DBServiceTests {
     }
 
     @Test
-    public void selectUserByLoginTest() throws ArraysLengthsMismathException {
+    public void selectUserByLoginTest() {
         final String
                 LOGIN1 = "TEST1",
                 LOGIN2 = "TEST2",
@@ -91,7 +90,7 @@ public class DBServiceTests {
     }
 
     @Test
-    public void selectUserByUnknownLoginTest() throws ArraysLengthsMismathException {
+    public void selectUserByUnknownLoginTest() {
         final String
                 LOGIN1 = "TEST1",
                 LOGIN2 = "TEST2",
