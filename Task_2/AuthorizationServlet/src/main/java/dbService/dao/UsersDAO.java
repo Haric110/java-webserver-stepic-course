@@ -36,7 +36,7 @@ public class UsersDAO {
     public boolean insertNewUser(String login, String password) {
         DBService.getInstance().checkConnection();
         return executor.execUpdate("insert into users (login, password) values (?, ?)",
-                new Object[]    { login, password } );
+                new Object[] { login, password } );
     }
 
     public @Nullable UsersDataSet getUserById(long id) {
