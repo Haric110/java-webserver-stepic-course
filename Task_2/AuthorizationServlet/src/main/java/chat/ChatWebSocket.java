@@ -5,6 +5,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -19,9 +20,10 @@ public class ChatWebSocket {
     }
 
     @OnWebSocketConnect
-    public void onOpen(Session session) {
-        this.session = session;
+    public void onOpen(final @NotNull Session session) {
         this.chatService.add(this);
+        this.session = session;
+        System.out.println("new session: " + session.getRemote().getRemoteAddress().toString());
     }
 
     @OnWebSocketClose
