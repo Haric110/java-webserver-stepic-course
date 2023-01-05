@@ -26,8 +26,11 @@ public class Source {
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setResourceBase("html");
 
-        HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[]{ resourceHandler, contextHandler });
+//        HandlerList handlers = new HandlerList();
+//        handlers.setHandlers(new Handler[]{ resourceHandler, contextHandler });
+
+        /*One more way*/
+        HandlerList handlers = new HandlerList(resourceHandler, contextHandler);
 
         Server server = new Server(8080);
         server.setHandler(handlers);
