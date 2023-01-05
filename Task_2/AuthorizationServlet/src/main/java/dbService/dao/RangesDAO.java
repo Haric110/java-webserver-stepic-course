@@ -2,6 +2,7 @@ package dbService.dao;
 
 import dbService.dataSets.RangesDataSet;
 import dbService.executor.Executor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class RangesDAO {
                                 \tAND row_from = (
                                 \t\tSELECT min(row_from)
                                 \t\tFROM parallel_tests.ranges r1
-                                \t\tWHERE t_name = r.t_name
+                                \t\tWHERE t_name = r.t_name AND NOT call_flag
                                 \t\tGROUP BY t_name)
                                 LIMIT 1""",
                         rs -> {
@@ -41,8 +42,8 @@ public class RangesDAO {
         return rangesList.get(0);
     }
 
-    public boolean updateRangeStatus(RangesDataSet range) {
-        return executor.execUpdate(
+    public synchronized void updateRangeStatus(@NotNull RangesDataSet range) throws Exception {
+        if (!executor.execUpdate(
                 """
                         UPDATE parallel_tests.ranges\s
                         SET call_flag = TRUE
@@ -51,6 +52,9 @@ public class RangesDAO {
                         range.getTableName(),
                         range.getRowStart(),
                         range.getRowEnd()
-                });
+                }))
+            throw new Exception("Error when updating range for table " + range.getTableName()
+                    + "row_start = " + range.getRowStart()
+                    + "row_end = " + range.getRowEnd());
     }
 }

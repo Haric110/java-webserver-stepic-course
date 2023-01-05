@@ -1,6 +1,5 @@
 package dbService.executor;
 
-import dbService.dao.Exceptions.UnhandledArgumentTypeException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
