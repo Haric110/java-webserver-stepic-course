@@ -4,7 +4,7 @@ WHERE
 	AND row_from = (
 		SELECT min(row_from)
 		FROM parallel_tests.ranges r1
-		WHERE t_name = r.t_name
+		WHERE t_name = r.t_name AND NOT call_flag
 		GROUP BY t_name)
 LIMIT 1;
 
