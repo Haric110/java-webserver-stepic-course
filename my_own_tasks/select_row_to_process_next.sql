@@ -10,7 +10,7 @@ LIMIT 1;
 
 UPDATE parallel_tests.ranges 
 SET call_flag = TRUE
-WHERE t_name = 'to_block_03' AND row_from = 1 AND row_to;
+WHERE t_name = 'to_block_03' AND row_from = 1 AND row_to = 100;
 
 UPDATE parallel_tests.ranges 
 SET call_flag = FALSE 

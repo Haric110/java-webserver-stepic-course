@@ -27,10 +27,10 @@ public final class Executor {
 
     public boolean execUpdate(String update, Object @NotNull [] argsValues) {
         try (PreparedStatement statement = connection.prepareStatement(update)) {
-            setValuesToStatement(argsValues, statement, update);
+            setValuesToStatement(argsValues, statement);
             statement.execute();
             return true;
-        } catch (SQLException | UnhandledArgumentTypeException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -45,12 +45,12 @@ public final class Executor {
         ArrayList<T> values;
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            setValuesToStatement(argsValues, statement, query);
+            setValuesToStatement(argsValues, statement);
             ResultSet rs = statement.executeQuery();
             values = handler.handle(rs);
 
             return values;
-        } catch (SQLException | UnhandledArgumentTypeException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -74,14 +74,11 @@ public final class Executor {
 
 
     private void setValuesToStatement(Object @NotNull [] argsValues,
-                                      PreparedStatement statement,
-                                      String query) throws SQLException, UnhandledArgumentTypeException {
+                                      PreparedStatement statement) throws SQLException {
         for (int i = 0; i < argsValues.length; i++) {
             if (argsValues[i] instanceof Long) statement.setLong(i + 1, (long) argsValues[i]);
             else if (argsValues[i] instanceof String) statement.setString(i + 1, argsValues[i].toString());
-            else throw new UnhandledArgumentTypeException(
-                        "Unhandled argument type has been passed for query \n\""
-                                + query + "\"\ncolumn number: " + (i + 1));
+            else statement.setObject(i + 1, argsValues[i]);
         }
     }
 }
