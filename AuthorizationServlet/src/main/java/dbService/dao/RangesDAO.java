@@ -1,21 +1,22 @@
 package dbService.dao;
 
+import dbService.DBService;
 import dbService.dataSets.RangesDataSet;
 import dbService.executor.Executor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
 public class RangesDAO {
-    private final Executor executor;
+    private final Executor EXECUTOR;
+    private static final Executor STAT_EXECUTOR = new Executor(DBService.getInstance().getConnection());
 
     public RangesDAO(Executor executor) {
-        this.executor = executor;
+        this.EXECUTOR = executor;
     }
 
-    public RangesDataSet getTableAndRange() {
+    private static synchronized RangesDataSet getTableAndRange() {
         ArrayList<RangesDataSet> rangesList =
-                executor.execQuery(
+                STAT_EXECUTOR.execQuery(
                         """
                                 WITH t AS (
                                 	SELECT
@@ -57,9 +58,14 @@ public class RangesDAO {
         return rangesList.get(0);
     }
 
-    public synchronized void updateRangeStatus(@NotNull RangesDataSet range) throws Exception {
-        if (!executor.execUpdate(
-                "CALL parallel_tests.update_range_status(?,?,?)",
+    public static synchronized void updateRangeStatus() throws Exception {
+        RangesDataSet range = getTableAndRange();
+
+        if (!STAT_EXECUTOR.execUpdate(
+                """
+                        UPDATE parallel_tests.ranges\s
+                        \tSET call_flag = TRUE
+                        \tWHERE t_name = ? AND row_from = ? AND row_to = ?""",
                 new Object[]{
                         range.getTableName(),
                         range.getRowStartFrom(),

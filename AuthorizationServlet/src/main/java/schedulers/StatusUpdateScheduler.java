@@ -11,7 +11,7 @@ public class StatusUpdateScheduler implements Runnable {
         RangesDAO dao = new RangesDAO(new Executor(DBService.getInstance().getConnection()));
 
         try {
-            dao.updateRangeStatus(dao.getTableAndRange());
+            dao.updateRangeStatus();
         } catch (Exception e) {
             e.printStackTrace();
         }
