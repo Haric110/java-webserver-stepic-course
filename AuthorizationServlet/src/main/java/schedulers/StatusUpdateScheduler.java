@@ -1,8 +1,7 @@
 package schedulers;
 
-import dbService.DBService;
 import dbService.dao.RangesDAO;
-import dbService.executor.Executor;
+import utils.RandomGen;
 
 public class StatusUpdateScheduler implements Runnable {
 
@@ -10,7 +9,11 @@ public class StatusUpdateScheduler implements Runnable {
     public void run() {
 
         try {
-            while (RangesDAO.updateRangeStatus()) ;
+            boolean flag = RangesDAO.updateRangeStatus();
+            while (flag) {
+                Thread.sleep(300 + RandomGen.random.nextInt(3000)); // do something with table and range...
+                flag = RangesDAO.updateRangeStatus();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

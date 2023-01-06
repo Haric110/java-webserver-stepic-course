@@ -5,7 +5,6 @@ import dbService.dataSets.RangesDataSet;
 import dbService.executor.Executor;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class RangesDAO {
@@ -56,10 +55,8 @@ public class RangesDAO {
                             return resultList;
                         });
 
-
-        if (rangesList == null) return null;
-        else if (rangesList.size() == 0) return null;
-        else return rangesList.get(0);
+        if (rangesList == null || rangesList.isEmpty()) return null;
+        return rangesList.get(0);
     }
 
     public static synchronized boolean updateRangeStatus() throws Exception {
