@@ -1,11 +1,25 @@
-SELECT r.t_name, row_from, row_to  FROM parallel_tests.ranges r 
-WHERE
-	NOT call_flag
-	AND row_from = (
-		SELECT min(row_from)
-		FROM parallel_tests.ranges r1
-		WHERE t_name = r.t_name AND NOT call_flag
-		GROUP BY t_name)
+WITH t AS (
+	SELECT
+		min(t1.row_from) AS min_row_from,
+		min(t1.row_to) 	 AS min_row_to
+	FROM (
+		SELECT
+			min(r1.row_from) AS row_from,
+			min(r1.row_to) 	 AS row_to
+		FROM
+			parallel_tests.ranges r1
+		WHERE NOT call_flag
+		GROUP BY
+			t_name
+	) t1
+) 
+SELECT
+	r.t_name,
+	t.min_row_from,
+	t.min_row_to
+FROM parallel_tests.ranges r
+INNER JOIN t ON r.row_from = t.min_row_from
+WHERE NOT r.call_flag
 LIMIT 1;
 
 UPDATE parallel_tests.ranges 
