@@ -8,10 +8,9 @@ public class StatusUpdateScheduler implements Runnable {
 
     @Override
     public void run() {
-        RangesDAO dao = new RangesDAO(new Executor(DBService.getInstance().getConnection()));
 
         try {
-            dao.updateRangeStatus();
+            while (RangesDAO.updateRangeStatus()) ;
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,7 +3,9 @@ package dbService.dao;
 import dbService.DBService;
 import dbService.dataSets.RangesDataSet;
 import dbService.executor.Executor;
+import org.jetbrains.annotations.Nullable;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class RangesDAO {
@@ -14,7 +16,7 @@ public class RangesDAO {
         this.EXECUTOR = executor;
     }
 
-    private static synchronized RangesDataSet getTableAndRange() {
+    private static synchronized @Nullable RangesDataSet getTableAndRange() {
         ArrayList<RangesDataSet> rangesList =
                 STAT_EXECUTOR.execQuery(
                         """
@@ -44,8 +46,8 @@ public class RangesDAO {
                                 """,
                         rs -> {
                             ArrayList<RangesDataSet> resultList = new ArrayList<>();
-                            while (!rs.isLast()) {
-                                rs.next();
+
+                            while (rs.next()) {
                                 resultList.add(new RangesDataSet(
                                         rs.getString(1),
                                         rs.getInt(2),
@@ -54,12 +56,15 @@ public class RangesDAO {
                             return resultList;
                         });
 
-        assert rangesList != null;
-        return rangesList.get(0);
+
+        if (rangesList == null) return null;
+        else if (rangesList.size() == 0) return null;
+        else return rangesList.get(0);
     }
 
-    public static synchronized void updateRangeStatus() throws Exception {
+    public static synchronized boolean updateRangeStatus() throws Exception {
         RangesDataSet range = getTableAndRange();
+        if (range == null) return false;
 
         if (!STAT_EXECUTOR.execUpdate(
                 """
@@ -74,5 +79,7 @@ public class RangesDAO {
         ) throw new Exception("Error when updating range for table " + range.getTableName()
                 + "row_start = " + range.getRowStartFrom()
                 + "row_end = " + range.getRowEndTo());
+        else return true;
+
     }
 }
