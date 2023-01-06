@@ -17,15 +17,30 @@ public class RangesDAO {
         ArrayList<RangesDataSet> rangesList =
                 executor.execQuery(
                         """
-                                SELECT r.t_name, row_from, row_to  FROM parallel_tests.ranges r\s
-                                WHERE
-                                \tNOT call_flag
-                                \tAND row_from = (
-                                \t\tSELECT min(row_from)
-                                \t\tFROM parallel_tests.ranges r1
-                                \t\tWHERE t_name = r.t_name AND NOT call_flag
-                                \t\tGROUP BY t_name)
-                                LIMIT 1""",
+                                WITH t AS (
+                                	SELECT
+                                		min(t1.row_from) AS min_row_from,
+                                		min(t1.row_to) 	 AS min_row_to
+                                	FROM (
+                                		SELECT
+                                			min(r1.row_from) AS row_from,
+                                			min(r1.row_to) 	 AS row_to
+                                		FROM
+                                			parallel_tests.ranges r1
+                                		WHERE NOT call_flag
+                                		GROUP BY
+                                			t_name
+                                	) t1
+                                )\s
+                                SELECT
+                                	r.t_name,
+                                	t.min_row_from,
+                                	t.min_row_to
+                                FROM parallel_tests.ranges r
+                                INNER JOIN t ON r.row_from = t.min_row_from
+                                WHERE NOT r.call_flag
+                                LIMIT 1;
+                                """,
                         rs -> {
                             ArrayList<RangesDataSet> resultList = new ArrayList<>();
                             while (!rs.isLast()) {
@@ -44,17 +59,14 @@ public class RangesDAO {
 
     public synchronized void updateRangeStatus(@NotNull RangesDataSet range) throws Exception {
         if (!executor.execUpdate(
-                """
-                        UPDATE parallel_tests.ranges\s
-                        SET call_flag = TRUE
-                        WHERE t_name = ? AND row_from = ? AND row_to = ?""",
+                "CALL parallel_tests.update_range_status(?,?,?)",
                 new Object[]{
                         range.getTableName(),
-                        range.getRowStart(),
-                        range.getRowEnd()
-                }))
-            throw new Exception("Error when updating range for table " + range.getTableName()
-                    + "row_start = " + range.getRowStart()
-                    + "row_end = " + range.getRowEnd());
+                        range.getRowStartFrom(),
+                        range.getRowEndTo()
+                })
+        ) throw new Exception("Error when updating range for table " + range.getTableName()
+                + "row_start = " + range.getRowStartFrom()
+                + "row_end = " + range.getRowEndTo());
     }
 }

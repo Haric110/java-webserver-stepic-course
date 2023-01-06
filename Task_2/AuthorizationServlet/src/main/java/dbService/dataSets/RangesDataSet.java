@@ -15,11 +15,11 @@ public class RangesDataSet {
         return tableName;
     }
 
-    public int getRowStart() {
+    public int getRowStartFrom() {
         return rowStart;
     }
 
-    public int getRowEnd() {
+    public int getRowEndTo() {
         return rowEnd;
     }
 }
