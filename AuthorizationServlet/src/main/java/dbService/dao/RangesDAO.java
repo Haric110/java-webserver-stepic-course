@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 public class RangesDAO {
-    private final Executor EXECUTOR;
+//    private final Executor EXECUTOR;
     private static final Executor STAT_EXECUTOR = new Executor(DBService.getInstance().getConnection());
 
-    public RangesDAO(Executor executor) {
-        this.EXECUTOR = executor;
-    }
+//    public RangesDAO(Executor executor) {
+//        this.EXECUTOR = executor;
+//    }
 
     private static synchronized @Nullable RangesDataSet getTableAndRange() {
         ArrayList<RangesDataSet> rangesList =
@@ -73,7 +73,7 @@ public class RangesDAO {
                         range.getRowStartFrom(),
                         range.getRowEndTo()
                 })
-        ) throw new Exception("Error when updating range for table " + range.getTableName()
+        ) throw new Exception("Error while updating range for table " + range.getTableName()
                 + "row_start = " + range.getRowStartFrom()
                 + "row_end = " + range.getRowEndTo());
         else return true;
