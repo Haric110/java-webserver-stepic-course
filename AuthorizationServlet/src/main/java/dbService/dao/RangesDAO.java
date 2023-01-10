@@ -21,12 +21,10 @@ public class RangesDAO {
                         """
                                 WITH t AS (
                                 	SELECT
-                                		min(t1.row_from) AS min_row_from,
-                                		min(t1.row_to) 	 AS min_row_to
+                                		min(t1.row_from) AS min_row_from
                                 	FROM (
                                 		SELECT
-                                			min(r1.row_from) AS row_from,
-                                			min(r1.row_to) 	 AS row_to
+                                			min(r1.row_from) AS row_from
                                 		FROM
                                 			parallel_tests.ranges r1
                                 		WHERE NOT call_flag
@@ -37,11 +35,11 @@ public class RangesDAO {
                                 SELECT
                                 	r.t_name,
                                 	t.min_row_from,
-                                	t.min_row_to
+                                	r.row_to
                                 FROM parallel_tests.ranges r
                                 INNER JOIN t ON r.row_from = t.min_row_from
                                 WHERE NOT r.call_flag
-                                LIMIT 1;
+                                LIMIT 1
                                 """,
                         rs -> {
                             ArrayList<RangesDataSet> resultList = new ArrayList<>();
